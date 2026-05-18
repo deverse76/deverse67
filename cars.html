@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Каталог автомобилей - АвтоМир</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -540,34 +540,56 @@
             margin-bottom: 30px;
         }
 
-        /* Модальные окна */
+        /* МОДАЛЬНЫЕ ОКНА С ПРОКРУТКОЙ */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 2000;
             padding: 20px;
+            overflow-y: auto;
+            cursor: pointer;
         }
 
         .modal {
             background: white;
-            border-radius: 20px;
-            max-width: 500px;
+            border-radius: 24px;
+            max-width: 650px;
             width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
             position: relative;
             animation: modalAppear 0.3s ease;
+            cursor: default;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+
+        /* Стили для скролла внутри модального окна */
+        .modal::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .modal::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        .modal::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
 
         @keyframes modalAppear {
             from {
                 opacity: 0;
-                transform: translateY(-50px);
+                transform: translateY(-30px);
             }
             to {
                 opacity: 1;
@@ -576,18 +598,32 @@
         }
 
         .modal-close {
-            position: absolute;
+            position: sticky;
             top: 15px;
             right: 15px;
-            background: none;
+            float: right;
+            background: rgba(255,255,255,0.9);
             border: none;
-            font-size: 24px;
+            font-size: 28px;
             cursor: pointer;
             color: var(--gray);
-            z-index: 1;
+            z-index: 10;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            margin: 10px 10px 0 0;
+        }
+        .modal-close:hover {
+            background: #f0f0f0;
+            color: #000;
+            transform: scale(1.05);
         }
 
-        /* Стили для формы */
+        /* Стили для формы внутри модалки */
         .form-group {
             margin-bottom: 20px;
         }
@@ -824,6 +860,10 @@
             .filter-buttons .btn {
                 width: 100%;
             }
+            .modal {
+                max-width: 95%;
+                max-height: 85vh;
+            }
         }
 
         @media (max-width: 480px) {
@@ -863,6 +903,13 @@
             .car-title {
                 font-size: 18px;
             }
+            .modal-close {
+                top: 5px;
+                right: 5px;
+                width: 32px;
+                height: 32px;
+                font-size: 22px;
+            }
         }
     </style>
 </head>
@@ -891,7 +938,6 @@
                         <li><a href="services.html"><i class="fas fa-chevron-right"></i> Услуги</a></li>
                         <li><a href="newsuser.html"><i class="fas fa-chevron-right"></i> Новости</a></li>
                         <li><a href="index.html#contact"><i class="fas fa-chevron-right"></i> Контакты</a></li>
-                        <!-- Пункт "Публикация" будет отображаться только для админов через auth.js -->
                     </ul>
                 </nav>
 
@@ -1034,14 +1080,14 @@
             filteredCars = [...carsData];
         }
 
-        // Получить начальные данные автомобилей
+        // Получить начальные данные автомобилей (ВСЕ ХАРАКТЕРИСТИКИ НА РУССКОМ)
         function getInitialCars() {
             return [
                 {
                     id: 1,
                     name: "Toyota Camry 2023",
                     price: "2 450 000 ₽",
-                    image: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+                    image: "https://vk.com/im/convo/558592188?entrypoint=list_all&z=photo558592188_457248242%2Ffe719095e8484be759",
                     features: ["Бензин", "Автомат", "2.5 л"],
                     badge: "НОВИНКА",
                     brand: "toyota",
@@ -1050,19 +1096,19 @@
                     maxPrice: 2450000,
                     description: "Современный седан с передовыми технологиями и элегантным дизайном.",
                     specs: {
-                        engine: "2.5 л, 203 л.с.",
-                        transmission: "Автоматическая",
-                        drive: "Передний",
-                        fuel: "7.8 л/100км",
-                        acceleration: "8.3 сек",
-                        trunk: "524 л"
+                        "Двигатель": "2.5 л, 203 л.с.",
+                        "Коробка передач": "Автоматическая",
+                        "Привод": "Передний",
+                        "Расход топлива": "7.8 л/100км",
+                        "Разгон 0-100 км/ч": "8.3 сек",
+                        "Объем багажника": "524 л"
                     }
                 },
                 {
                     id: 2,
                     name: "BMW X5 2022",
                     price: "5 800 000 ₽",
-                    image: "https://images.unsplash.com/photo-1553440569-bcc63803a83d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+                    image: "https://vk.com/im/convo/558592188?entrypoint=list_all&z=photo558592188_457248244%2Fmail558592188-557",
                     features: ["Дизель", "Автомат", "3.0 л"],
                     badge: "ПРЕМИУМ",
                     brand: "bmw",
@@ -1071,19 +1117,19 @@
                     maxPrice: 5800000,
                     description: "Роскошный внедорожник премиум-класса с мощным двигателем.",
                     specs: {
-                        engine: "3.0 л, 340 л.с.",
-                        transmission: "Автоматическая 8-ст",
-                        drive: "Полный",
-                        fuel: "9.2 л/100км",
-                        acceleration: "5.5 сек",
-                        trunk: "650 л"
+                        "Двигатель": "3.0 л, 340 л.с.",
+                        "Коробка передач": "Автоматическая 8-ступ.",
+                        "Привод": "Полный",
+                        "Расход топлива": "9.2 л/100км",
+                        "Разгон 0-100 км/ч": "5.5 сек",
+                        "Объем багажника": "650 л"
                     }
                 },
                 {
                     id: 3,
                     name: "Mercedes-Benz C-Class",
                     price: "3 900 000 ₽",
-                    image: "https://images.unsplash.com/photo-1563720223484-21c6c2d3c487?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+                    image: "https://vk.com/im/convo/558592188?entrypoint=list_all&z=photo558592188_457248245%2Fmail558592188-558",
                     features: ["Бензин", "Автомат", "2.0 л"],
                     badge: "",
                     brand: "mercedes",
@@ -1092,12 +1138,12 @@
                     maxPrice: 3900000,
                     description: "Элегантный бизнес-седан с роскошным интерьером.",
                     specs: {
-                        engine: "2.0 л, 258 л.с.",
-                        transmission: "Автоматическая 9-ст",
-                        drive: "Задний",
-                        fuel: "7.5 л/100км",
-                        acceleration: "6.0 сек",
-                        trunk: "455 л"
+                        "Двигатель": "2.0 л, 258 л.с.",
+                        "Коробка передач": "Автоматическая 9-ступ.",
+                        "Привод": "Задний",
+                        "Расход топлива": "7.5 л/100км",
+                        "Разгон 0-100 км/ч": "6.0 сек",
+                        "Объем багажника": "455 л"
                     }
                 }
             ];
@@ -1258,9 +1304,7 @@
             if (userState.isAdmin) {
                 const adminControls = document.createElement('div');
                 adminControls.className = 'admin-controls';
-                adminControls.innerHTML = `
-                    
-                `;
+                adminControls.innerHTML = ``;
                 mainContent.appendChild(adminControls);
             }
             
@@ -1467,7 +1511,7 @@
             }, 500);
         }
 
-        // Базовые функции для работы с автомобилями
+        // Базовые функции для работы с автомобилями (МОДАЛКИ С ПРОКРУТКОЙ)
         function showCarDetails(carId) {
             const car = carsData.find(c => c.id === carId);
             if (!car) return;
@@ -1475,7 +1519,7 @@
             const modal = document.createElement('div');
             modal.className = 'modal-overlay';
             modal.innerHTML = `
-                <div class="modal" style="max-width: 600px;">
+                <div class="modal">
                     <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
                     <div style="padding: 30px;">
                         <h2 style="margin-bottom: 20px; color: var(--dark);">${car.name}</h2>
@@ -1497,9 +1541,8 @@
                             </div>
                         ` : ''}
                         
-                        <!-- Кнопки действий -->
                         <div style="display: flex; gap: 15px; margin-top: 30px;">
-                            <button class="btn" onclick="closeCarModal(this) && showTestDriveModal(${carId})" style="flex: 1; background: var(--primary); color: white;">
+                            <button class="btn" onclick="closeCarModalFromButton(this) && showTestDriveModal(${carId})" style="flex: 1; background: var(--primary); color: white;">
                                 <i class="fas fa-calendar-alt"></i> Заявка на тест-драйв
                             </button>
                         </div>
@@ -1516,20 +1559,17 @@
             });
         }
 
-        function closeCarModal(button) {
+        function closeCarModalFromButton(button) {
             const modal = button.closest('.modal-overlay');
-            if (modal) {
-                modal.remove();
-            }
+            if (modal) modal.remove();
             return true;
         }
 
-        // Функция для модального окна заявки на тест-драйв
+        // Функция для модального окна заявки на тест-драйв (с прокруткой)
         function showTestDriveModal(carId) {
             const car = carsData.find(c => c.id === carId);
             if (!car) return;
             
-            // Проверка авторизации
             if (!userState.isLoggedIn) {
                 showNotification('Для оформления заявки необходимо войти в систему', 'warning');
                 setTimeout(() => {
@@ -1538,7 +1578,6 @@
                 return;
             }
             
-            // Сохраняем выбранный автомобиль
             selectedCarForOrder = car;
             
             const today = new Date();
@@ -1550,7 +1589,7 @@
             const modal = document.createElement('div');
             modal.className = 'modal-overlay';
             modal.innerHTML = `
-                <div class="modal" style="max-width: 500px;">
+                <div class="modal">
                     <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
                     <div style="padding: 30px;">
                         <h2 style="margin-bottom: 20px; color: var(--dark);">Заявка на тест-драйв</h2>
@@ -1607,7 +1646,6 @@
             
             document.body.appendChild(modal);
             
-            // Автозаполнение данных пользователя
             if (userState.firstName) {
                 modal.querySelector('#testDrive-firstName').value = userState.firstName;
             }
@@ -1615,16 +1653,13 @@
                 modal.querySelector('#testDrive-phone').value = userState.phone;
             }
             
-            // Устанавливаем дату по умолчанию (завтра)
             modal.querySelector('#testDrive-date').value = tomorrow.toISOString().split('T')[0];
             
-            // Маска для телефона
             modal.querySelector('#testDrive-phone').addEventListener('input', function(e) {
                 let x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
                 e.target.value = '+7' + (x[2] ? ' (' + x[2] : '') + (x[3] ? ') ' + x[3] : '') + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
             });
             
-            // Обработка формы
             modal.querySelector('#testDriveForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 submitTestDriveRequest();
@@ -1637,7 +1672,6 @@
             });
         }
 
-        // Функция отправки заявки на тест-драйв
         function submitTestDriveRequest() {
             if (!selectedCarForOrder) {
                 showNotification('Ошибка: автомобиль не выбран', 'error');
@@ -1645,17 +1679,16 @@
             }
 
             const car = selectedCarForOrder;
-            const firstName = document.getElementById('testDrive-firstName').value;
-            const phone = document.getElementById('testDrive-phone').value;
-            const date = document.getElementById('testDrive-date').value;
-            const time = document.getElementById('testDrive-time').value;
+            const firstName = document.getElementById('testDrive-firstName')?.value;
+            const phone = document.getElementById('testDrive-phone')?.value;
+            const date = document.getElementById('testDrive-date')?.value;
+            const time = document.getElementById('testDrive-time')?.value;
 
             if (!firstName || !phone || !date || !time) {
                 showNotification('Заполните все обязательные поля', 'warning');
                 return;
             }
 
-            // Сохраняем заявку (используем тот же ключ, что и админ-панель)
             const applications = JSON.parse(localStorage.getItem('carApplications') || '[]');
             const newApplication = {
                 id: applications.length > 0 ? Math.max(...applications.map(a => a.id)) + 1 : 1,
@@ -1676,13 +1709,10 @@
             applications.push(newApplication);
             localStorage.setItem('carApplications', JSON.stringify(applications));
             
-            // Закрываем модальное окно
             const modal = document.querySelector('.modal-overlay');
             if (modal) modal.remove();
             
             showNotification(`Заявка на тест-драйв "${car.name}" оформлена!`, 'success');
-            
-            // Сбрасываем выбранный автомобиль
             selectedCarForOrder = null;
         }
 
@@ -1723,115 +1753,6 @@
                     showNotification('Автомобиль успешно удален', 'success');
                 }
             }
-        }
-
-        // Модальное окно для добавления автомобиля
-        function showAddCarModal() {
-            const modalHTML = `
-                <div class="modal-overlay" id="addCarModal">
-                    <div class="modal">
-                        <button class="modal-close" onclick="closeAddCarModal()">&times;</button>
-                        <div style="padding: 30px;">
-                            <h2 style="margin-bottom: 20px; color: var(--dark);">Добавить новый автомобиль</h2>
-                            <form id="addCarForm" style="display: flex; flex-direction: column; gap: 15px;">
-                                <input type="text" id="carName" placeholder="Название автомобиля" required style="padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
-                                <input type="text" id="carPrice" placeholder="Цена (например: 2 450 000 ₽)" required style="padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
-                                <input type="text" id="carImage" placeholder="URL изображения" value="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" required style="padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
-                                <input type="text" id="carFeatures" placeholder="Характеристики через запятую" value="Бензин, Автомат, 2.0 л" required style="padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
-                                <input type="text" id="carBadge" placeholder="Бейдж (необязательно)" value="НОВИНКА" style="padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
-                                <select id="carBrand" required style="padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; background: white;">
-                                    <option value="">Выберите марку</option>
-                                    <option value="toyota" selected>Toyota</option>
-                                    <option value="bmw">BMW</option>
-                                    <option value="mercedes">Mercedes-Benz</option>
-                                    <option value="audi">Audi</option>
-                                    <option value="volkswagen">Volkswagen</option>
-                                    <option value="lexus">Lexus</option>
-                                    <option value="hyundai">Hyundai</option>
-                                    <option value="kia">Kia</option>
-                                </select>
-                                <select id="carBodyType" required style="padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; background: white;">
-                                    <option value="">Выберите тип кузова</option>
-                                    <option value="sedan" selected>Седан</option>
-                                    <option value="suv">Внедорожник</option>
-                                    <option value="hatchback">Хэтчбек</option>
-                                    <option value="coupe">Купе</option>
-                                    <option value="wagon">Универсал</option>
-                                    <option value="minivan">Минивэн</option>
-                                </select>
-                                <select id="carFuelType" required style="padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; background: white;">
-                                    <option value="">Выберите тип топлива</option>
-                                    <option value="petrol" selected>Бензин</option>
-                                    <option value="diesel">Дизель</option>
-                                    <option value="hybrid">Гибрид</option>
-                                    <option value="electric">Электрический</option>
-                                </select>
-                                <input type="number" id="carMaxPrice" placeholder="Максимальная цена (число)" value="2000000" required style="padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px;">
-                                <textarea id="carDescription" placeholder="Описание автомобиля" required style="padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; min-height: 100px; resize: vertical;">Новый автомобиль с отличными характеристиками</textarea>
-                                <button type="submit" class="btn btn-success" style="width: 100%; margin-top: 10px;">
-                                    <i class="fas fa-plus-circle"></i> Добавить автомобиль
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-            
-            document.getElementById('addCarForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                addNewCar();
-            });
-        }
-
-        function closeAddCarModal() {
-            const modal = document.getElementById('addCarModal');
-            if (modal) {
-                modal.remove();
-            }
-        }
-
-        function addNewCar() {
-            const carName = document.getElementById('carName').value;
-            const carPrice = document.getElementById('carPrice').value;
-            const carImage = document.getElementById('carImage').value;
-            const carFeatures = document.getElementById('carFeatures').value.split(',').map(f => f.trim());
-            const carBadge = document.getElementById('carBadge').value;
-            const carBrand = document.getElementById('carBrand').value;
-            const carBodyType = document.getElementById('carBodyType').value;
-            const carFuelType = document.getElementById('carFuelType').value;
-            const carMaxPrice = parseInt(document.getElementById('carMaxPrice').value) || 0;
-            const carDescription = document.getElementById('carDescription').value;
-
-            if (!carName || !carPrice || !carBrand || !carBodyType || !carFuelType) {
-                showNotification('Пожалуйста, заполните все обязательные поля', 'warning');
-                return;
-            }
-
-            const newCar = {
-                id: carsData.length > 0 ? Math.max(...carsData.map(c => c.id)) + 1 : 1,
-                name: carName,
-                price: carPrice,
-                image: carImage || 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
-                features: carFeatures,
-                badge: carBadge || "",
-                brand: carBrand.toLowerCase(),
-                bodyType: carBodyType,
-                fuelType: carFuelType,
-                maxPrice: carMaxPrice,
-                description: carDescription,
-                specs: {},
-                createdAt: new Date().toISOString()
-            };
-            
-            carsData.push(newCar);
-            filteredCars = [...carsData];
-            
-            saveCarsData();
-            closeAddCarModal();
-            renderCarsGrid();
-            showNotification('Автомобиль успешно добавлен!', 'success');
         }
 
         // Инициализация при загрузке
