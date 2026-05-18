@@ -914,7 +914,7 @@
     </style>
 </head>
 <body>
-    <!-- ШАПКА (из newsuser.html) -->
+    <!-- ШАПКА -->
 <header>
     <div class="container">
         <div class="header-content">
@@ -1002,7 +1002,7 @@
     </footer>
 
     <script>
-        // Данные автомобилей (загружаем из localStorage или используем начальные данные)
+        // Данные автомобилей (ТОЛЬКО НОВЫЕ МАШИНЫ, старые удалены)
         let carsData = [];
         let filteredCars = [];
 
@@ -1022,65 +1022,7 @@
         // Текущий выбранный автомобиль для заявки
         let selectedCarForOrder = null;
 
-        // Миграция данных из старого формата
-        function migrateData() {
-            const oldData = localStorage.getItem('carsData');
-            if (oldData) {
-                try {
-                    const oldCars = JSON.parse(oldData);
-                    const currentCars = localStorage.getItem('cars');
-                    
-                    if (!currentCars) {
-                        localStorage.setItem('cars', oldData);
-                        console.log('Данные мигрированы из carsData в cars');
-                    } else {
-                        const parsedCurrentCars = JSON.parse(currentCars);
-                        const allCars = [...parsedCurrentCars];
-                        
-                        oldCars.forEach(oldCar => {
-                            const exists = allCars.some(car => 
-                                car.id === oldCar.id || 
-                                (car.name === oldCar.name && car.price === oldCar.price)
-                            );
-                            if (!exists) {
-                                allCars.push(oldCar);
-                            }
-                        });
-                        
-                        localStorage.setItem('cars', JSON.stringify(allCars));
-                        console.log('Данные объединены из carsData и cars');
-                    }
-                    
-                    localStorage.removeItem('carsData');
-                } catch (e) {
-                    console.error('Ошибка при миграции данных:', e);
-                }
-            }
-        }
-
-        // Инициализация данных автомобилей
-        function initCarsData() {
-            migrateData();
-            
-            const savedData = localStorage.getItem('cars');
-            if (savedData) {
-                try {
-                    carsData = JSON.parse(savedData);
-                    console.log('Загружено автомобилей из localStorage:', carsData.length);
-                } catch (e) {
-                    console.error('Ошибка при загрузке данных автомобилей:', e);
-                    carsData = getInitialCars();
-                }
-            } else {
-                carsData = getInitialCars();
-                saveCarsData();
-                console.log('Созданы начальные данные автомобилей');
-            }
-            
-            filteredCars = [...carsData];
-        }
-
-        // Получить начальные данные автомобилей (ВСЕ ХАРАКТЕРИСТИКИ НА РУССКОМ)
+        // Получить начальные данные автомобилей (ТОЛЬКО НОВЫЕ МАШИНЫ с вашими картинками)
         function getInitialCars() {
             return [
                 {
@@ -1147,6 +1089,15 @@
                     }
                 }
             ];
+        }
+
+        // Принудительная установка данных (удаляем старые машины)
+        function initCarsData() {
+            // Полностью заменяем данные на новые, игнорируя старый localStorage
+            carsData = getInitialCars();
+            saveCarsData();
+            filteredCars = [...carsData];
+            console.log('Загружены новые автомобили (старые удалены)');
         }
 
         // Сохраняем данные автомобилей в localStorage
@@ -1442,7 +1393,7 @@
             card.innerHTML = `
                 ${car.badge ? `<div class="car-badge">${car.badge}</div>` : ''}
                 <div class="car-image-container">
-                    <img src="${car.image || 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80'}" alt="${car.name}" class="car-image" onerror="this.src='https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80'">
+                    <img src="${car.image}" alt="${car.name}" class="car-image" onerror="this.src='https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
                 </div>
                 <div class="car-info">
                     <h3 class="car-title">${car.name}</h3>
@@ -1511,7 +1462,7 @@
             }, 500);
         }
 
-        // Базовые функции для работы с автомобилями (МОДАЛКИ С ПРОКРУТКОЙ)
+        // Показать детали автомобиля
         function showCarDetails(carId) {
             const car = carsData.find(c => c.id === carId);
             if (!car) return;
@@ -1523,7 +1474,7 @@
                     <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
                     <div style="padding: 30px;">
                         <h2 style="margin-bottom: 20px; color: var(--dark);">${car.name}</h2>
-                        <img src="${car.image || 'https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80'}" alt="${car.name}" style="width: 100%; border-radius: 10px; margin-bottom: 20px;">
+                        <img src="${car.image}" alt="${car.name}" style="width: 100%; border-radius: 10px; margin-bottom: 20px;" onerror="this.src='https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'">
                         <div style="font-size: 24px; font-weight: bold; color: var(--primary); margin-bottom: 20px;">${car.price}</div>
                         <p style="margin-bottom: 20px; line-height: 1.6;">${car.description || 'Описание отсутствует'}</p>
                         <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
@@ -1565,7 +1516,7 @@
             return true;
         }
 
-        // Функция для модального окна заявки на тест-драйв (с прокруткой)
+        // Функция для модального окна заявки на тест-драйв
         function showTestDriveModal(carId) {
             const car = carsData.find(c => c.id === carId);
             if (!car) return;
@@ -1580,7 +1531,6 @@
             
             selectedCarForOrder = car;
             
-            const today = new Date();
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             const nextWeek = new Date();
@@ -1757,7 +1707,7 @@
 
         // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', function() {
-            initCarsData();
+            initCarsData(); // Принудительно загружаем только новые машины
             loadUserState();
             
             const users = JSON.parse(localStorage.getItem('users') || '[]');
